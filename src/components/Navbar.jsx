@@ -39,7 +39,6 @@ export default function Navbar() {
         right: 75,
         zIndex: 100,
         padding: '0.5rem 1rem',
-        zIndex: 100,
         paddingTop: '3%',
         paddingBottom: '3%',
       }}>
@@ -95,14 +94,14 @@ export default function Navbar() {
             id='navLink'
             className='menu-link'
             onClick={() => {
-                handleLinkClick(link.to);
+                handleLinkClick('/about');
                 setOpen(false);
             }}
           >
             About
           </Link>
           <Link
-            to="/Partners"
+            to="/partners"
             id='navLink'
             className='menu-link'
             style={{
@@ -112,12 +111,13 @@ export default function Navbar() {
               fontSize: '2.1rem',
             }}
             onClick={() => {
-                handleLinkClick(link.to);
+                handleLinkClick('/partners');
                 setOpen(false);
             }}
           >
             Partners
           </Link>
+          {/* Temporarily commented out until these pages are created
           <Link
             to="/resources"
             id='navLink'
@@ -129,7 +129,7 @@ export default function Navbar() {
               fontSize: '2.1rem',
             }}
             onClick={() => {
-                handleLinkClick(link.to);
+                handleLinkClick('/resources');
                 setOpen(false);
             }}
           >
@@ -146,12 +146,13 @@ export default function Navbar() {
               fontSize: '2.1rem',
             }}
             onClick={() => {
-                handleLinkClick(link.to);
+                handleLinkClick('/contact');
                 setOpen(false);
             }}
           >
             Contact
           </Link>
+          */}
           {/* Exit cross in top right of overlay */}
           <button
             aria-label="Close menu"
