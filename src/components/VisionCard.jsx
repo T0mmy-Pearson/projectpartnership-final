@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import windTurbineImg from "../imgs/AdobeStock_480882949.jpeg";
 
 export default function VisionCard({ interval = 8000 }) {
   const phrases = [
@@ -39,7 +40,7 @@ export default function VisionCard({ interval = 8000 }) {
       <div className="titleContainer">
         <h2 className="headerLogo" id='aboutTitle'>Our Vision</h2>
       </div>
-      <img className="visionImg" src="src/imgs/AdobeStock_480882949.jpeg" alt="Wind Turbine" />
+      <img className="visionImg" src={windTurbineImg} alt="Wind Turbine" />
       <p className="visionText" style={{ minHeight: 40, transition: "opacity 0.5s" }}>
         {phrases[idx]}
       </p>

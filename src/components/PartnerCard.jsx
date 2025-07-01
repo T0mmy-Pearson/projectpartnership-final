@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import linkedinIcon from "../imgs/linkedin.svg";
 
 export default function ProfileCard({ name, role, image, email, bio, linkedin }) {
   const [showModal, setShowModal] = useState(false);
@@ -36,7 +37,7 @@ export default function ProfileCard({ name, role, image, email, bio, linkedin })
             Read Bio →
           </a>
           <a href={linkedin} id="linkedinLink">
-            <img src="src/imgs/linkedin.svg" alt="LinkedIn" />
+            <img src={linkedinIcon} alt="LinkedIn" />
           </a>
           </div>
       </div>

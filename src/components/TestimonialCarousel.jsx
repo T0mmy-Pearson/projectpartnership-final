@@ -7,25 +7,25 @@ const TestimonialCarousel = ({
       quote: "Project Partnership helped us navigate complex energy transition challenges; their expertise was invaluable, and they truly understood our constraints while standing by us as genuine partners.",
       author: "Sarah Mitchell",
       role: "VP of Engineering, North Sea Energy",
-      image: "/src/imgs/testimonial-1.jpg"
+      image: null
     },
     {
       quote: "Their expertise and understanding of the offshore wind market helped us make over 50 key technical decisions. They consistently provided high-quality insights and have been a valued partner.",
       author: "David Thompson",
       role: "Head of Development, Atlantic Renewables",
-      image: "/src/imgs/testimonial-2.jpg"
+      image: null
     },
     {
       quote: "Project Partnership were able to make a key contribution to our decommissioning project. They outperformed other consultancies and we see them as a top-tier partner.",
       author: "Emma Richardson",
       role: "Operations Director, Subsea Solutions",
-      image: "/src/imgs/testimonial-3.jpg"
+      image: null
     },
     {
       quote: "They understand the energy market well, build relationships and pushed to understand our business which has led to multiple successful projects together.",
       author: "James Wilson",
       role: "Lead Engineer, Offshore Dynamics",
-      image: "/src/imgs/testimonial-4.jpg"
+      image: null
     }
   ],
   autoPlay = true,
@@ -86,13 +86,29 @@ const TestimonialCarousel = ({
                 </div>
               </div>
               <div className="testimonial-author-image">
-                <img 
-                  src={testimonials[currentIndex].image} 
-                  alt={testimonials[currentIndex].author}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
+                {testimonials[currentIndex].image ? (
+                  <img 
+                    src={testimonials[currentIndex].image} 
+                    alt={testimonials[currentIndex].author}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    background: '#ACCBF7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold'
+                  }}>
+                    {testimonials[currentIndex].author.charAt(0)}
+                  </div>
+                )}
               </div>
             </div>
           </div>

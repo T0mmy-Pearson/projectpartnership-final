@@ -1,6 +1,8 @@
 import React from "react";
 import NeuralNetworkBackground from "../components/NeuralNetworkBackground";
 import PartnerCard from "../components/PartnerCard";
+import ChrisImg from "../imgs/Chris.png";
+import GrahamImg from "../imgs/Graham.jpg";
 
 export default function Partners() {
   return (
@@ -12,7 +14,7 @@ export default function Partners() {
             linkedin={"https://www.linkedin.com/in/christopher-pearson-69b26010/"}
             name="Chris Pearson"
             role="Principle Partner"
-            image="src/imgs/Chris.png"
+            image={ChrisImg}
             email="chris@projectpartnership.co.uk"
             bio="Christopher has developed, built and led international teams of people to successfully deliver portfolios of projects and achieve improved financial performance across the globe. He has managed large Projects and  Portfolios. He has also held various senior management positions at national and Corporate level. Christopher also sat on the Scottish Offshore Wind Energy Council's Innovation group. 
 Christopher has a successful track record of building high performance teams across industry and public sector organisations.
@@ -22,7 +24,7 @@ A leading expert in Energy Integration in the context of Offshore renewable ener
           linkedin={"https://www.linkedin.com/in/graham-whitehead-40116124/"}
             name="Graham Whitehead"
             role="Principle Partner"
-            image="src/imgs/Graham.jpg"
+            image={GrahamImg}
             email="graham@projectpartnership.co.uk"
             bio="Graham has almost 30 years experience across Oil and gas developments  as  operator and contractor. He has held senior roles managing  large scale developments both technically and commercially for independent operators working in the UK and internationally. More recently he has been involved in energy integration  project development and assessment."
           />
