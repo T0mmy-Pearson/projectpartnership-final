@@ -44,10 +44,9 @@ const CONTAINER_SIZE = 700;
 const CENTER = CONTAINER_SIZE / 2;
 const CIRCLE_RADIUS = 280;
 
-function getNodePositions() {
-
+function getNodePositions(rotationAngle = 0) {
   return HERO_NODES.map((node, i) => {
-    const angle = (2 * Math.PI * i) / HERO_NODES.length - Math.PI / 2;
+    const angle = (2 * Math.PI * i) / HERO_NODES.length - Math.PI / 2 + rotationAngle;
     return {
       ...node,
       x: CENTER + CIRCLE_RADIUS * Math.cos(angle),
@@ -62,7 +61,8 @@ export default function DynamicHeroStatic() {
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [animationPhase, setAnimationPhase] = useState(0);
-  const nodes = getNodePositions();
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const nodes = getNodePositions(rotationAngle);
 
   // Auto-cycle 
   useEffect(() => {
@@ -70,6 +70,20 @@ export default function DynamicHeroStatic() {
       setAnimationPhase(prev => (prev + 1) % HERO_NODES.length);
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Rotation animation
+  useEffect(() => {
+    const startTime = Date.now();
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      // Complete rotation every 20 seconds (adjust speed as needed)
+      const newAngle = (elapsed / 20000) * 2 * Math.PI;
+      setRotationAngle(newAngle);
+      requestAnimationFrame(animate);
+    };
+    const animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
   }, []);
 
   // Pulse animation 
