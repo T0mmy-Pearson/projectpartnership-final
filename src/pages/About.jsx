@@ -19,9 +19,8 @@ export default function about() {
     <NeuralNetworkBackground />
     </div>  */}
     <section className="accordionContainer">
-      {isTabletOrMobile ? <MobileAboutAccordion/> : <AboutAccordion />}
+      {isTabletOrMobile ? <ServiceCards />: <AboutAccordion />}
     </section>
-    <ServiceCards />
     </div>
     </>
   )

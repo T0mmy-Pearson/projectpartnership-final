@@ -1,41 +1,49 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
+import { 
+  FiZap, 
+  FiUsers, 
+  FiTrendingUp, 
+  FiFilter, 
+  FiTool, 
+  FiTarget 
+} from 'react-icons/fi';
 
 const HERO_NODES = [
   {
     tagline: "Energy Sector Consultancy",
     body: "With decades of experience with numerous industry leaders, we can bring knowledge, experience and success to a project.",
-    icon: "🔋",
-    color: "#FF6B6B"
+    icon: FiZap,
+    color: "#86b5f6"
   },
   {
     tagline: "People, Support & Skills",
     body: "Through our structure, we bring the best people, support and project management across projects and portfolios.",
-    icon: "👥",
-    color: "#4ECDC4"
+    icon: FiUsers,
+    color: "#86b5f6"
   },
   {
     tagline: "Field Analysis",
     body: "We assist in analysis of existing oil and gas discoveries.",
-    icon: "📊",
-    color: "#45B7D1"
+    icon: FiTrendingUp,
+    color: "#86b5f6"
   },
   {
     tagline: "Screening & Simplifying",
     body: "We screen and simplify Integrated Energy development options.",
-    icon: "🔍",
-    color: "#96CEB4"
+    icon: FiFilter,
+    color: "#86b5f6"
   },
   {
     tagline: "Decommissioning",
     body: "We can plan, consult and deliver the decommissioning of all offshore assets.",
-    icon: "🏗️",
-    color: "#FECA57"
+    icon: FiTool,
+    color: "#86b5f6"
   },
   {
     tagline: "Project Delivery",
     body: "We can successfully deliver the Project or Portfolio to our clients satisfaction.",
-    icon: "🚀",
-    color: "#FF9FF3"
+    icon: FiTarget,
+    color: "#86b5f6"
   },
 ];
 
@@ -44,13 +52,20 @@ const CONTAINER_SIZE = 700;
 const CENTER = CONTAINER_SIZE / 2;
 const CIRCLE_RADIUS = 280;
 
-function getNodePositions(rotationAngle = 0) {
+/**
+ * Returns the positions for nodes arranged in a circle, with optional rotation and radius pulsing.
+ */
+function getNodePositions(rotationAngle = 0, pulsePhase = 0) {
+  // Create a gentler pulsing radius effect - oscillates between 0.9 and 1.1 of the base radius
+  const radiusMultiplier = 1 + 0.1 * Math.sin(pulsePhase);
+  const currentRadius = CIRCLE_RADIUS * radiusMultiplier;
+  
   return HERO_NODES.map((node, i) => {
     const angle = (2 * Math.PI * i) / HERO_NODES.length - Math.PI / 2 + rotationAngle;
     return {
       ...node,
-      x: CENTER + CIRCLE_RADIUS * Math.cos(angle),
-      y: CENTER + CIRCLE_RADIUS * Math.sin(angle),
+      x: CENTER + currentRadius * Math.cos(angle),
+      y: CENTER + currentRadius * Math.sin(angle),
     };
   });
 }
@@ -58,13 +73,24 @@ function getNodePositions(rotationAngle = 0) {
 export default function DynamicHeroStatic() {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
-  const [hoveredIdx, setHoveredIdx] = useState(null);
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [animationPhase, setAnimationPhase] = useState(0);
   const [rotationAngle, setRotationAngle] = useState(0);
-  const nodes = getNodePositions(rotationAngle);
+  const [pulsePhase, setPulsePhase] = useState(0);
+  const [nodeHovered, setNodeHovered] = useState(null);
+  
+  // Memoize node positions to ensure consistency between lines and nodes
+  const nodes = useMemo(() => {
+    const positions = getNodePositions(rotationAngle, pulsePhase);
+    // Round to prevent floating point precision issues
+    return positions.map(node => ({
+      ...node,
+      x: Math.round(node.x * 100) / 100,
+      y: Math.round(node.y * 100) / 100,
+    }));
+  }, [rotationAngle, pulsePhase]);
 
-  // Auto-cycle 
+  // Cycles the animation phase for subtle node scaling and central pulse (not the main rotation)
   useEffect(() => {
     const interval = setInterval(() => {
       setAnimationPhase(prev => (prev + 1) % HERO_NODES.length);
@@ -72,30 +98,37 @@ export default function DynamicHeroStatic() {
     return () => clearInterval(interval);
   }, []);
 
-  // Rotation animation
+  // Smoothly rotates the whole circle and pulses the radius continuously
   useEffect(() => {
-    const startTime = Date.now();
+    let animationId;
     const animate = () => {
-      const elapsed = Date.now() - startTime;
-      // Complete rotation every 20 seconds (adjust speed as needed)
-      const newAngle = (elapsed / 20000) * 2 * Math.PI;
-      setRotationAngle(newAngle);
-      requestAnimationFrame(animate);
+      // Stop animation when a node is hovered
+      if (nodeHovered === null) {
+        setRotationAngle(prev => {
+          const increment = (2 * Math.PI) / (120 * 60); // 120 seconds (2 minutes) for full rotation
+          return prev + increment;
+        });
+        setPulsePhase(prev => {
+          const increment = (2 * Math.PI) / (20 * 60); // 20 seconds for full pulse cycle
+          return prev + increment;
+        });
+      }
+      animationId = requestAnimationFrame(animate);
     };
-    const animationId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationId);
-  }, []);
+    animationId = requestAnimationFrame(animate);
+    return () => {
+      if (animationId) cancelAnimationFrame(animationId);
+    };
+  }, [nodeHovered]);
 
-  // Pulse animation 
+  // Animated ripple effect for the background canvas (with cleanup)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
+    let animationFrameId;
     const animateRipple = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Create ripple effect 
       const time = Date.now() * 0.002;
       for (let i = 0; i < 3; i++) {
         const radius = (Math.sin(time + i) * 50) + 100;
@@ -105,32 +138,61 @@ export default function DynamicHeroStatic() {
         ctx.lineWidth = 2;
         ctx.stroke();
       }
-      
-      requestAnimationFrame(animateRipple);
+      animationFrameId = requestAnimationFrame(animateRipple);
     };
     animateRipple();
+    return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
+  // Modal ESC support
+  useEffect(() => {
+    if (selectedIdx === null) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setSelectedIdx(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedIdx]);
+
+  // Node interaction handlers
   const handleNodeClick = (idx) => {
     setSelectedIdx(selectedIdx === idx ? null : idx);
-    setHoveredIdx(null);
   };
+  const handleModalClose = () => setSelectedIdx(null);
+
+  // Hover hook handlers
+  const handleNodeMouseEnter = (idx) => {
+    setNodeHovered(idx);
+  };
+
+  const handleNodeMouseLeave = () => {
+    setNodeHovered(null);
+  };
+
+  const handleContainerMouseLeave = () => {
+    setNodeHovered(null);
+  };
+
+
 
   return (
     <section
       ref={containerRef}
+      onMouseLeave={handleContainerMouseLeave}
       style={{
         width: CONTAINER_SIZE,
         height: CONTAINER_SIZE,
         margin: "40px auto",
         position: "relative",
-        background: "linear-gradient(135deg, #ACCBF7 0%, #86b5f6 50%, #6fa8f5 100%)",
         borderRadius: "50%",
         overflow: "visible",
         boxShadow: "0 20px 60px rgba(172, 203, 247, 0.3), inset 0 1px 0 rgba(255,255,255,0.2)",
         transition: "all 0.3s ease",
       }}
     >
+      {/* Ripple Canvas */}
       <canvas
         ref={canvasRef}
         width={CONTAINER_SIZE}
@@ -146,34 +208,45 @@ export default function DynamicHeroStatic() {
         aria-hidden="true"
       />
       
-      {/* Central hub */}
+      {/* Central hub with always-on pulse animation */}
       <div
         style={{
           position: "absolute",
           top: "50%",
           left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "120px",
-          height: "120px",
+          width: "180px",
+          height: "180px",
           background: "linear-gradient(135deg, #fff 0%, #f8f9fa 100%)",
           borderRadius: "50%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "2rem",
-          fontWeight: "bold",
+          fontSize: "1.4rem",
+          fontWeight: "300",
           color: "#ACCBF7",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+          boxShadow: "0 15px 40px rgba(0,0,0,0.15)",
           zIndex: 5,
-          animation: `${animationPhase % 2 === 0 ? 'pulse' : 'none'} 2s infinite`,
+          animation: `pulse 2s infinite`,
+          pointerEvents: "none",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+          lineHeight: "1.3",
+          padding: "20px",
         }}
       >
-        ⚡
+        <span style={{
+          maxWidth: "100%",
+          wordWrap: "break-word",
+          hyphens: "auto",
+        }}>project partnership</span>
       </div>
 
       {/* Modal for selected node */}
       {selectedIdx !== null && (
         <div
+          role="dialog"
+          aria-modal="true"
+          tabIndex={-1}
           style={{
             position: "fixed",
             top: 0,
@@ -187,7 +260,7 @@ export default function DynamicHeroStatic() {
             zIndex: 1000,
             animation: "fadeIn 0.3s ease",
           }}
-          onClick={() => setSelectedIdx(null)}
+          onClick={handleModalClose}
         >
           <div
             style={{
@@ -203,7 +276,8 @@ export default function DynamicHeroStatic() {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setSelectedIdx(null)}
+              onClick={handleModalClose}
+              aria-label="Close"
               style={{
                 position: "absolute",
                 top: "1rem",
@@ -218,7 +292,10 @@ export default function DynamicHeroStatic() {
               ×
             </button>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>
-              {HERO_NODES[selectedIdx].icon}
+              {React.createElement(HERO_NODES[selectedIdx].icon, { 
+                size: 48, 
+                color: HERO_NODES[selectedIdx].color 
+              })}
             </div>
             <h3 style={{ 
               color: HERO_NODES[selectedIdx].color, 
@@ -239,45 +316,7 @@ export default function DynamicHeroStatic() {
         </div>
       )}
 
-      {/* Hover tooltip */}
-      {hoveredIdx !== null && selectedIdx === null && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            background: "linear-gradient(135deg, #fff 0%, #f8f9fa 100%)",
-            color: "#333",
-            fontWeight: "400",
-            fontSize: "16px",
-            borderRadius: "15px",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
-            padding: "1.5rem 2rem",
-            zIndex: 10,
-            minWidth: "280px",
-            maxWidth: "350px",
-            textAlign: "center",
-            animation: "fadeIn 0.2s ease",
-            border: `3px solid ${HERO_NODES[hoveredIdx].color}`,
-          }}
-        >
-          <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
-            {HERO_NODES[hoveredIdx].icon}
-          </div>
-          <div style={{ 
-            fontWeight: "600", 
-            marginBottom: "0.5rem",
-            color: HERO_NODES[hoveredIdx].color 
-          }}>
-            {HERO_NODES[hoveredIdx].tagline}
-          </div>
-          <div style={{ fontSize: "14px", color: "#666" }}>
-            Click to learn more
-          </div>
-        </div>
-      )}
-      {/*  Enhanced connecting lines */}
+      {/* Connecting lines */}
       <svg
         width={CONTAINER_SIZE}
         height={CONTAINER_SIZE}
@@ -292,7 +331,7 @@ export default function DynamicHeroStatic() {
       >
         <defs>
           <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.8)" />
+            <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
             <stop offset="50%" stopColor="rgba(255,255,255,0.4)" />
             <stop offset="100%" stopColor="rgba(255,255,255,0.2)" />
           </linearGradient>
@@ -308,17 +347,12 @@ export default function DynamicHeroStatic() {
                   x2={end.x}
                   y2={end.y}
                   stroke="url(#lineGradient)"
-                  strokeWidth={hoveredIdx === i || hoveredIdx === j ? "3" : "1.5"}
-                  opacity={hoveredIdx === i || hoveredIdx === j ? 0.8 : 0.3}
-                  style={{
-                    transition: "all 0.3s ease",
-                  }}
+                  strokeWidth="1.5"
+                  opacity="0.3"
                 />
               )
           )
         )}
-        
-        {/* Central connecting lines */}
         {nodes.map((node, i) => (
           <line
             key={`center-${i}`}
@@ -326,98 +360,94 @@ export default function DynamicHeroStatic() {
             y1={CENTER}
             x2={node.x}
             y2={node.y}
-            stroke={hoveredIdx === i ? HERO_NODES[i].color : "rgba(255,255,255,0.2)"}
-            strokeWidth={hoveredIdx === i ? "3" : "1"}
-            opacity={hoveredIdx === i ? 0.8 : 0.3}
+            stroke={nodeHovered === i ? "#60a5fa" : "rgba(255,255,255,0.2)"}
+            strokeWidth={nodeHovered === i ? "3" : "1"}
+            opacity={nodeHovered === i ? "1" : "0.3"}
             style={{
-              transition: "all 0.3s ease",
+              transition: "stroke 0.3s ease, strokeWidth 0.3s ease, opacity 0.3s ease",
             }}
           />
         ))}
       </svg>
       
-      {/* Enhanced Nodes */}
-      {nodes.map((node, idx) => (
-        <div
-          key={idx}
-          onMouseEnter={() => setHoveredIdx(idx)}
-          onMouseLeave={() => setHoveredIdx(null)}
-          onClick={() => handleNodeClick(idx)}
-          style={{
-            position: "absolute",
-            left: node.x - NODE_RADIUS,
-            top: node.y - NODE_RADIUS,
-            width: NODE_RADIUS * 2,
-            height: NODE_RADIUS * 2,
-            background: hoveredIdx === idx 
-              ? `linear-gradient(135deg, ${node.color} 0%, #fff 100%)`
-              : "linear-gradient(135deg, #fff 0%, #f8f9fa 100%)",
-            borderRadius: "50%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            boxShadow: hoveredIdx === idx 
-              ? `0 15px 40px ${node.color}40, 0 5px 15px rgba(0,0,0,0.1)`
-              : "0 8px 25px rgba(0,0,0,0.1)",
-            zIndex: hoveredIdx === idx ? 3 : 2,
-            padding: "8px",
-            cursor: "pointer",
-            transform: hoveredIdx === idx 
-              ? "scale(1.1) translateY(-5px)" 
-              : animationPhase === idx 
-                ? "scale(1.05)" 
-                : "scale(1)",
-            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            border: hoveredIdx === idx ? `3px solid ${node.color}` : "3px solid transparent",
-          }}
-        >
-          {/* Icon */}
+      {/* Node buttons */}
+      {nodes.map((node, idx) => {
+        const isAnimated = animationPhase === idx;
+        const isHovered = nodeHovered === idx;
+        return (
           <div
+            key={idx}
+            onClick={() => handleNodeClick(idx)}
+            onMouseEnter={() => handleNodeMouseEnter(idx)}
+            onMouseLeave={handleNodeMouseLeave}
             style={{
-              fontSize: hoveredIdx === idx ? "2rem" : "1.5rem",
-              marginBottom: "4px",
-              transition: "all 0.3s ease",
-            }}
-          >
-            {node.icon}
-          </div>
-          
-          {/* Tagline */}
-          <div
-            style={{
-              fontWeight: 600,
-              fontSize: hoveredIdx === idx ? "14px" : "12px",
-              color: hoveredIdx === idx ? "#fff" : node.color,
+              position: "absolute",
+              left: `${node.x}px`,
+              top: `${node.y}px`,
+              width: NODE_RADIUS * 2,
+              height: NODE_RADIUS * 2,
+              transform: `translate(-50%, -50%) ${isHovered ? 'scale(1.1)' : isAnimated ? 'scale(1.05)' : 'scale(1)'}`,
+              background: isHovered 
+                ? `linear-gradient(135deg, ${node.color} 0%, #fff 100%)`
+                : "linear-gradient(135deg, #fff 0%, #f8f9fa 100%)",
+              borderRadius: "50%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               textAlign: "center",
-              lineHeight: "1.2",
-              transition: "all 0.3s ease",
+              boxShadow: isHovered
+                ? `0 15px 40px ${node.color}40, 0 5px 15px rgba(0,0,0,0.1)`
+                : "0 8px 25px rgba(0,0,0,0.1)",
+              zIndex: isHovered ? 3 : 2,
+              padding: "8px",
+              cursor: "pointer",
+              transformOrigin: "center center",
+              transition: "background 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              border: isHovered ? `3px solid ${node.color}` : "3px solid transparent",
             }}
+            aria-label={node.tagline}
           >
-            {node.tagline}
+            <div
+              style={{
+                marginBottom: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.3s ease",
+              }}
+            >
+              {React.createElement(node.icon, { 
+                size: isHovered ? 32 : 24,
+                color: isHovered ? "#fff" : node.color
+              })}
+            </div>
+            <div
+              style={{
+                fontWeight: 500,
+                fontSize: isHovered ? "14px" : "12px",
+                color: isHovered ? "#fff" : node.color,
+                textAlign: "center",
+                lineHeight: "1.2",
+                transition: "all 0.3s ease",
+              }}
+            >
+              {node.tagline}
+            </div>
           </div>
-        </div>
-      ))}
-      
-      {/* Add CSS animations */}
+        );
+      })}
+
+      {/* Animations */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        
         @keyframes slideUp {
-          from { 
-            opacity: 0; 
-            transform: translateY(30px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        
         @keyframes pulse {
           0%, 100% { 
             transform: translate(-50%, -50%) scale(1); 
