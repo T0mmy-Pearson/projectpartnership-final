@@ -493,6 +493,9 @@
   }
 .cursor{
     margin: 0 auto;
+    position: absolute;
+    top: 10%;
+    transform: translateX(-50%);
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
