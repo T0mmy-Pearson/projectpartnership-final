@@ -332,8 +332,12 @@ export default function DynamicHeroStatic() {
         <defs>
           <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
-            <stop offset="50%" stopColor="rgba(255,255,255,0.4)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.2)" />
+            <stop offset="50%" stopColor="rgba(255,255,255,0.5)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0.3)" />
+          </linearGradient>
+          <linearGradient id="centerLineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0.4)" />
           </linearGradient>
         </defs>
         {nodes.map((start, i) =>
@@ -347,8 +351,8 @@ export default function DynamicHeroStatic() {
                   x2={end.x}
                   y2={end.y}
                   stroke="url(#lineGradient)"
-                  strokeWidth="1.5"
-                  opacity="0.3"
+                  strokeWidth="2"
+                  opacity="0.5"
                 />
               )
           )
@@ -360,9 +364,9 @@ export default function DynamicHeroStatic() {
             y1={CENTER}
             x2={node.x}
             y2={node.y}
-            stroke={nodeHovered === i ? "#60a5fa" : "rgba(255,255,255,0.2)"}
-            strokeWidth={nodeHovered === i ? "3" : "1"}
-            opacity={nodeHovered === i ? "1" : "0.3"}
+            stroke={nodeHovered === i ? "rgba(255,255,255,1)" : "url(#centerLineGradient)"}
+            strokeWidth={nodeHovered === i ? "4" : "2"}
+            opacity={nodeHovered === i ? "1" : "0.5"}
             style={{
               transition: "stroke 0.3s ease, strokeWidth 0.3s ease, opacity 0.3s ease",
             }}

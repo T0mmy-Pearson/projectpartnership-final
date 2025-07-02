@@ -125,8 +125,7 @@ export default function VisionCard({ interval = 6000 }) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '90%',
-          maxWidth: '600px',
+          width: '80%',
           zIndex: 2,
         }}>
           {/* Phase indicators */}
@@ -154,7 +153,7 @@ export default function VisionCard({ interval = 6000 }) {
           <p 
             className="visionText" 
             style={{ 
-              transition: "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+
               color: '#ffffff',
               fontSize: '2rem',
               lineHeight: '1.6',
@@ -163,8 +162,8 @@ export default function VisionCard({ interval = 6000 }) {
               transform: isAnimating ? 'translateY(-5px)' : 'translateY(0)',
               opacity: isAnimating ? 0.7 : 1,
               textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5)',
-              fontWeight: '500',
-              background: 'rgba(0,0,0,0.2)',
+              fontWeight: '100',
+              background: 'rgba(0,0,0,0.1)',
               padding: '1.5rem',
               borderRadius: '12px',
               backdropFilter: 'blur(5px)',
