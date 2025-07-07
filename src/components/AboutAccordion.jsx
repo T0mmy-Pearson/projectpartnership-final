@@ -409,7 +409,7 @@ export default function DynamicHeroStatic() {
               cursor: "pointer",
               transformOrigin: "center center",
               transition: "background 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-              border: isHovered ? `3px solid ${node.color}` : "3px solid transparent",
+              border: isHovered ? `3px solid` : "3px solid transparent",
             }}
             aria-label={node.tagline}
           >
