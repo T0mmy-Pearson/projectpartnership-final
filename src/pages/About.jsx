@@ -1,8 +1,7 @@
 import React from 'react'
-import NeuralNetworkBackground from '../components/NeuralNetworkBackground'
+import WindVisualizationBackground from '../components/WindVisualizationBackground'
 import VisionCard from '../components/VisionCard'
 import AboutAccordion from '../components/AboutAccordion'
-import MobileAboutAccordion from '../components/MobileAboutAccordion'
 import ServiceCards from '../components/ServiceCards'
 import { useMediaQuery } from 'react-responsive'
 
@@ -11,6 +10,7 @@ export default function about() {
    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
   return (
     <>
+    <WindVisualizationBackground />
     <div className="pageContainer">
     <section className="aboutContainer">
     <VisionCard />

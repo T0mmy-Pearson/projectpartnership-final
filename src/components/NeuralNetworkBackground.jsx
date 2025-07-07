@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
-const NODE_COUNT = 60;
-const NODE_RADIUS = 10;
+const NODE_COUNT = 360;
+const NODE_RADIUS = 5;
 const LINE_DISTANCE = 120;
 
 function randomBetween(a, b) {
