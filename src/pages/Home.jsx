@@ -13,6 +13,13 @@ export default function Home() {
   return (
     <>
       <WindVisualizationBackground />
+      <div className="image-container">
+        <img className="background-image" src={heroImg} alt="offshore wind"></img>
+        <h2 className="cursor typewriter-animation overlay-text">
+         A cooperative for energy in transition
+        </h2>
+      </div>
+      <ModernHero />
       {/* Mini Wind Visualization - just the clickable window */}
               <div style={{ 
                 display: 'flex', 
@@ -25,13 +32,6 @@ export default function Home() {
                   borderRadius="1rem" 
                 />
               </div>
-      <div className="image-container">
-        <img className="background-image" src={heroImg} alt="offshore wind"></img>
-        <h2 className="cursor typewriter-animation overlay-text">
-         A cooperative for energy in transition
-        </h2>
-      </div>
-      <ModernHero />
       <ServiceCards></ServiceCards>
       
       {/* Demo of Gorilla-style hover animations */}
