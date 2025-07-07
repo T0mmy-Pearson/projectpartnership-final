@@ -19,7 +19,6 @@ export default function Home() {
          A cooperative for energy in transition
         </h2>
       </div>
-      <ModernHero />
       {/* Mini Wind Visualization - just the clickable window */}
               <div style={{ 
                 display: 'flex', 
@@ -32,6 +31,7 @@ export default function Home() {
                   borderRadius="1rem" 
                 />
               </div>
+      <ModernHero />
       
       {/* Demo of Gorilla-style hover animations */}
       <div style={{ display: 'flex', gap: '2rem', padding: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
