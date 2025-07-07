@@ -179,6 +179,7 @@ export default function DynamicHeroStatic() {
 
   return (
     <section
+      id="about-accordion"
       ref={containerRef}
       onMouseLeave={handleContainerMouseLeave}
       style={{

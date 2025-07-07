@@ -1,5 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import seaFoam from "../imgs/surface3.jpg";
+import WindVisualizationCard from './WindVisualisationCard';
+import WindVisualizationMini from './WindVisualizationMini';
 
 const ModernHero = ({ 
   title = "ENERGY TRANSITION EXPERTS",
@@ -10,6 +13,16 @@ const ModernHero = ({
   onPrimaryClick,
   onSecondaryClick
 }) => {
+  const navigate = useNavigate();
+
+  const handleSecondaryClick = () => {
+    if (onSecondaryClick) {
+      onSecondaryClick();
+    } else {
+      // Navigate to About page and scroll to AboutAccordion
+      navigate('/about');
+    }
+  };
   return (
     <section className="modern-hero" style={{
       position: 'relative',
@@ -61,7 +74,7 @@ const ModernHero = ({
             </button>
             <button 
               className="modern-hero-btn secondary"
-              onClick={onSecondaryClick}
+              onClick={handleSecondaryClick}
               style={{
                 textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -72,7 +85,7 @@ const ModernHero = ({
             </button>
           </div>
         </div>
-        
+
         <div className="modern-hero-brands">
           <p className="brands-label" style={{
             textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
@@ -97,6 +110,7 @@ const ModernHero = ({
             }}>Marine Renewables</div>
           </div>
         </div>
+        
       </div>
     </section>
   );

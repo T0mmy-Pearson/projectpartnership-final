@@ -1,5 +1,5 @@
 import React from 'react'
-import WindVisualizationBackground from '../components/WindVisualizationBackground'
+import WindVisualizationBackground from '../components/WindVisualisationBackground'
 import VisionCard from '../components/VisionCard'
 import AboutAccordion from '../components/AboutAccordion'
 import ServiceCards from '../components/ServiceCards'
