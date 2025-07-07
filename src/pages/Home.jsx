@@ -32,7 +32,6 @@ export default function Home() {
                   borderRadius="1rem" 
                 />
               </div>
-      <ServiceCards></ServiceCards>
       
       {/* Demo of Gorilla-style hover animations */}
       <div style={{ display: 'flex', gap: '2rem', padding: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
